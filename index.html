@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>useContext</title>
+  <!-- React CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <!-- Babel for JSX -->
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body>
+  <div id="root" ></div>
+
+  <script type="text/babel">
+    const { createContext, useState, useContext } = React;
+
+
+    const ThemeContext = createContext();
+
+
+    function ThemeProvider({ children }) {
+      const [theme, setTheme] = useState("claro");
+
+      function cambiadorTema() {
+        if (theme === "claro") {
+          setTheme("oscuro");
+        } else {
+          setTheme("claro");
+        }
+      }
+
+      return (
+        <ThemeContext.Provider value={{ theme, cambiadorTema }}>
+          {children}
+        </ThemeContext.Provider>
+      );
+    }
+
+
+    function ThemeToggle() {
+      const { cambiadorTema } = useContext(ThemeContext);
+
+      return (
+        <button 
+          onClick={cambiadorTema}
+        >
+          Cambiar Tema
+        </button>
+      );
+    }
+
+    //uso todo el fondo para que se vea como un modo obscuro normal
+    function ThemeDisplay() {
+      const { theme } = useContext(ThemeContext);
+
+      let bgColor = "#ffffff";
+      let textColor = "#000000";
+      let texto = "Claro";
+
+      if (theme === "oscuro") {
+        bgColor = "#000000";
+        textColor = "#ffffff";
+        texto = "Oscuro";
+      }
+
+
+      document.body.style.backgroundColor = bgColor;
+      document.body.style.color = textColor;
+
+      return (
+        <div style={{
+          textAlign: "center",
+        }}>
+          <h2>Tema Actual: {texto}</h2>
+        </div>
+      );
+    }
+
+
+    function App() {
+      return (
+        <ThemeProvider>
+          <div style={{margin: "auto" }}>
+            <h1>Ejemplo de useContext</h1>
+            <ThemeToggle />
+            <ThemeDisplay />
+          </div>
+        </ThemeProvider>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</body>
+</html>
